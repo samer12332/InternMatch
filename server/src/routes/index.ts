@@ -1,5 +1,7 @@
 import { Router } from "express";
 
+import { authRouter } from "./auth.routes";
+
 export const apiRouter = Router();
 
 apiRouter.get("/health", (_req, res) => {
@@ -10,3 +12,5 @@ apiRouter.get("/health", (_req, res) => {
     },
   });
 });
+
+apiRouter.use("/auth", authRouter);

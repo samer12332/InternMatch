@@ -1,10 +1,17 @@
 import "dotenv/config";
 
-const databaseUrl = process.env.DATABASE_URL;
+const requiredEnvironmentVariable = (name: "DATABASE_URL" | "JWT_SECRET") => {
+  const value = process.env[name];
 
-if (!databaseUrl) {
-  throw new Error("DATABASE_URL must be configured.");
-}
+  if (!value) {
+    throw new Error(`${name} must be configured.`);
+  }
+
+  return value;
+};
+
+const databaseUrl = requiredEnvironmentVariable("DATABASE_URL");
+const jwtSecret = requiredEnvironmentVariable("JWT_SECRET");
 
 const port = Number(process.env.PORT ?? 4000);
 
@@ -17,4 +24,6 @@ export const env = {
   port,
   clientUrl: process.env.CLIENT_URL ?? "http://localhost:5173",
   databaseUrl,
+  jwtSecret,
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "1h",
 } as const;
