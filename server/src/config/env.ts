@@ -14,9 +14,14 @@ const databaseUrl = requiredEnvironmentVariable("DATABASE_URL");
 const jwtSecret = requiredEnvironmentVariable("JWT_SECRET");
 
 const port = Number(process.env.PORT ?? 4000);
+const maxInternshipsPerMajor = Number(process.env.MAX_INTERNSHIPS_PER_MAJOR ?? 3);
 
 if (!Number.isInteger(port) || port < 1 || port > 65535) {
   throw new Error("PORT must be a valid port number.");
+}
+
+if (!Number.isInteger(maxInternshipsPerMajor) || maxInternshipsPerMajor < 1) {
+  throw new Error("MAX_INTERNSHIPS_PER_MAJOR must be a positive integer.");
 }
 
 export const env = {
@@ -26,4 +31,5 @@ export const env = {
   databaseUrl,
   jwtSecret,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "1h",
+  maxInternshipsPerMajor,
 } as const;

@@ -50,6 +50,7 @@ The platform distributes internship opportunities among students. Students provi
 ## Explicit assumptions
 
 - Each internship has a capacity because ranking and distribution require limited available positions.
+- `MAX_INTERNSHIPS_PER_MAJOR` is configurable; the evaluation default is 3 postings per company and major. This is separate from `Internship.capacity`, which is the number of available student slots.
 - A minimal `ADMIN` role exists to execute distribution.
 - A company's “request number of applications” means filtered student search with a result limit.
 - Bio search initially uses simple case-insensitive text matching.

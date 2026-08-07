@@ -14,3 +14,14 @@ export const validateBody = (schema: ZodType): RequestHandler => (req, _res, nex
   req.body = result.data;
   next();
 };
+
+export const validateParams = (schema: ZodType): RequestHandler => (req, _res, next) => {
+  const result = schema.safeParse(req.params);
+
+  if (!result.success) {
+    next(new AppError(result.error.issues[0]?.message ?? "Invalid route parameters", 400));
+    return;
+  }
+
+  next();
+};
