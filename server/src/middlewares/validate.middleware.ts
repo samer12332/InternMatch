@@ -25,3 +25,15 @@ export const validateParams = (schema: ZodType): RequestHandler => (req, _res, n
 
   next();
 };
+
+export const validateQuery = (schema: ZodType): RequestHandler => (req, res, next) => {
+  const result = schema.safeParse(req.query);
+
+  if (!result.success) {
+    next(new AppError(result.error.issues[0]?.message ?? "Invalid query parameters", 400));
+    return;
+  }
+
+  res.locals.validatedQuery = result.data;
+  next();
+};
