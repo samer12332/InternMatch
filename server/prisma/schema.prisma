@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  STUDENT
+  COMPANY
+  ADMIN
+}
+
+model User {
+  id             String          @id @default(uuid()) @db.Uuid
+  email          String          @unique
+  passwordHash   String
+  role           UserRole
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  studentProfile StudentProfile?
+  companyProfile CompanyProfile?
+}
+
+model StudentProfile {
+  id                 String              @id @default(uuid()) @db.Uuid
+  userId             String              @unique @db.Uuid
+  nationalId         String              @unique
+  name               String
+  city               String
+  gpa                Decimal
+  major              String
+  bio                String
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  user               User                @relation(fields: [userId], references: [id], onDelete: Restrict)
+  applications       Application[]
+  profileViews       ProfileView[]
+  distributionResult DistributionResult?
+}
+
+model CompanyProfile {
+  id           String        @id @default(uuid()) @db.Uuid
+  userId       String        @unique @db.Uuid
+  name         String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  user         User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+  internships  Internship[]
+  profileViews ProfileView[]
+}
+
+model Internship {
+  id                  String               @id @default(uuid()) @db.Uuid
+  companyId           String               @db.Uuid
+  title               String
+  description         String
+  major               String
+  minimumGpa          Decimal
+  capacity            Int
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  company             CompanyProfile       @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  applications        Application[]
+  distributionResults DistributionResult[]
+}
+
+model Application {
+  id           String         @id @default(uuid()) @db.Uuid
+  studentId    String         @db.Uuid
+  internshipId String         @db.Uuid
+  wishOrder    Int
+  createdAt    DateTime       @default(now())
+  student      StudentProfile @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  internship   Internship     @relation(fields: [internshipId], references: [id], onDelete: Restrict)
+
+  @@unique([studentId, internshipId])
+  @@unique([studentId, wishOrder])
+}
+
+model ProfileView {
+  id        String         @id @default(uuid()) @db.Uuid
+  studentId String         @db.Uuid
+  companyId String         @db.Uuid
+  viewedAt  DateTime       @default(now())
+  student   StudentProfile @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  company   CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Restrict)
+}
+
+model DistributionResult {
+  id           String         @id @default(uuid()) @db.Uuid
+  studentId    String         @unique @db.Uuid
+  internshipId String?        @db.Uuid
+  wishOrder    Int?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  student      StudentProfile @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  internship   Internship?    @relation(fields: [internshipId], references: [id], onDelete: Restrict)
+}

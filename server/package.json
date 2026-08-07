@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "InternMatch server database foundation",
+  "scripts": {
+    "prisma:format": "prisma format",
+    "prisma:validate": "prisma validate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "prisma": "^6.19.0",
+    "typescript": "^7.0.2"
+  }
+}
