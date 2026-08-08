@@ -1,0 +1,102 @@
+:root {
+  color: #172033;
+  background: #f5f7fb;
+}
+
+body { background: #f5f7fb; }
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  background: radial-gradient(circle at top left, #e5edff 0, transparent 34rem), #f5f7fb;
+}
+
+.auth-card {
+  width: min(100%, 35rem);
+  border: 0;
+  border-radius: 1.1rem;
+  box-shadow: 0 1.25rem 3.5rem rgb(31 50 94 / 10%);
+}
+
+.auth-card-wide { width: min(100%, 48rem); }
+
+.brand-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: .7rem;
+  color: white;
+  background: #3157d5;
+  font-weight: 700;
+  letter-spacing: -.06em;
+}
+
+.brand-label { color: #172033; letter-spacing: -.025em; }
+
+.auth-eyebrow, .section-eyebrow {
+  color: #3157d5;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.auth-card .form-control, .auth-card .form-select {
+  min-height: 2.85rem;
+  border-color: #dce2ed;
+}
+
+.auth-card .form-control:focus {
+  border-color: #7891e6;
+  box-shadow: 0 0 0 .2rem rgb(49 87 213 / 12%);
+}
+
+.btn-primary { background: #3157d5; border-color: #3157d5; }
+.btn-primary:hover, .btn-primary:focus { background: #2849b4; border-color: #2849b4; }
+
+.app-navbar {
+  min-height: 4.5rem;
+  background: rgb(255 255 255 / 92%);
+}
+
+.dashboard-hero {
+  padding: 2.5rem;
+  border-radius: 1.15rem;
+  color: #fff;
+  background: linear-gradient(120deg, #213d9f, #3157d5);
+  box-shadow: 0 1rem 2.5rem rgb(43 76 183 / 18%);
+}
+
+.dashboard-stat, .access-card {
+  border: 0;
+  border-radius: 1rem;
+  box-shadow: 0 .5rem 1.75rem rgb(31 50 94 / 7%);
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: .35rem .7rem;
+  border-radius: 999px;
+  color: #2849b4;
+  background: #e8eeff;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+}
+
+.page-loading {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  color: #5f6b85;
+  background: #f5f7fb;
+}
+
+@media (max-width: 575.98px) {
+  .dashboard-hero { padding: 1.75rem; }
+}
