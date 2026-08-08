@@ -54,6 +54,7 @@ The platform distributes internship opportunities among students. Students provi
 - A minimal `ADMIN` role exists to execute distribution.
 - A company's “request number of applications” means filtered student search with a result limit.
 - Bio search initially uses simple case-insensitive text matching.
+- Each successful company profile-detail request records one profile view, including repeated views.
 - Major is a hard eligibility rule, not a numeric ranking weight.
 
 ## Architecture decisions
