@@ -1,5 +1,6 @@
 **/node_modules/
 **/dist/
+server/prisma/seed.js
 .vscode/
 **/.env
 **/.env.*

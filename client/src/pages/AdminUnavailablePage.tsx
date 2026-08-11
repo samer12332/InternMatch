@@ -19,6 +19,7 @@ const emptySummary: DistributionSummary = {
     secondWish: 0,
     thirdWish: 0,
 };
+const resultsPerPage = 10;
 
 export const AdminUnavailablePage = () => {
     const [summary, setSummary] = useState<DistributionSummary>(emptySummary);
@@ -27,6 +28,10 @@ export const AdminUnavailablePage = () => {
     const [running, setRunning] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const [resultsPage, setResultsPage] = useState(1);
+    const [studentQuery, setStudentQuery] = useState("");
+    const [majorFilter, setMajorFilter] = useState("");
+    const [statusFilter, setStatusFilter] = useState<"" | "ASSIGNED" | "UNASSIGNED">("");
     const load = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -37,6 +42,7 @@ export const AdminUnavailablePage = () => {
             ]);
             setSummary(nextSummary);
             setResults(nextResults);
+            setResultsPage(1);
         } catch (err) {
             setError(
                 getApiErrorMessage(err, "Unable to load distribution data."),
@@ -55,6 +61,7 @@ export const AdminUnavailablePage = () => {
         try {
             setSummary(await runDistribution());
             setResults(await getDistributionResults());
+            setResultsPage(1);
             setSuccess(
                 "Distribution completed and current results were replaced.",
             );
@@ -72,6 +79,17 @@ export const AdminUnavailablePage = () => {
         ["2nd Wish", summary.secondWish, "Second preference"],
         ["3rd Wish", summary.thirdWish, "Third preference"],
     ];
+    const majors = [...new Set(results.map((result) => result.student.major))].sort();
+    const filteredResults = results.filter((result) =>
+        result.student.name.toLowerCase().includes(studentQuery.trim().toLowerCase()) &&
+        (!majorFilter || result.student.major === majorFilter) &&
+        (!statusFilter || result.status === statusFilter),
+    );
+    const totalResultPages = Math.ceil(filteredResults.length / resultsPerPage);
+    const visibleResults = filteredResults.slice(
+        (resultsPage - 1) * resultsPerPage,
+        resultsPage * resultsPerPage,
+    );
     return (
         <>
             <AppNavbar />
@@ -143,6 +161,16 @@ export const AdminUnavailablePage = () => {
                                         Distribution Results
                                     </h2>
                                 </div>
+                                {results.length > 0 && (
+                                    <div className="p-4 border-bottom bg-light-subtle">
+                                        <div className="row g-2">
+                                            <div className="col-md-5"><input className="form-control" placeholder="Search student name" value={studentQuery} onChange={(event) => { setStudentQuery(event.target.value); setResultsPage(1); }} /></div>
+                                            <div className="col-md-4"><select className="form-select" value={majorFilter} onChange={(event) => { setMajorFilter(event.target.value); setResultsPage(1); }}><option value="">All majors</option>{majors.map((major) => <option key={major} value={major}>{major}</option>)}</select></div>
+                                            <div className="col-md-3"><select className="form-select" value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value as "" | "ASSIGNED" | "UNASSIGNED"); setResultsPage(1); }}><option value="">All statuses</option><option value="ASSIGNED">Assigned</option><option value="UNASSIGNED">Unassigned</option></select></div>
+                                        </div>
+                                        <div className="d-flex justify-content-between align-items-center gap-2 mt-3"><span className="small text-muted">{filteredResults.length} matching {filteredResults.length === 1 ? "result" : "results"}</span><button className="btn btn-link btn-sm text-decoration-none" onClick={() => { setStudentQuery(""); setMajorFilter(""); setStatusFilter(""); setResultsPage(1); }}>Clear filters</button></div>
+                                    </div>
+                                )}
                                 {results.length === 0 ? (
                                     <div className="student-status-card border-0">
                                         <strong>
@@ -153,6 +181,8 @@ export const AdminUnavailablePage = () => {
                                             results for all students.
                                         </span>
                                     </div>
+                                ) : filteredResults.length === 0 ? (
+                                    <div className="student-status-card border-0"><strong>No matching results</strong><span>Try changing or clearing the filters.</span></div>
                                 ) : (
                                     <div className="table-responsive">
                                         <table className="table table-hover align-middle mb-0">
@@ -168,63 +198,111 @@ export const AdminUnavailablePage = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {results.map((result) => (
-                                                    <tr key={result.student.id}>
-                                                        <td className="fw-semibold">
-                                                            {
+                                                {visibleResults.map(
+                                                    (result) => (
+                                                        <tr
+                                                            key={
                                                                 result.student
-                                                                    .name
+                                                                    .id
                                                             }
-                                                        </td>
-                                                        <td>
-                                                            {
-                                                                result.student
-                                                                    .major
-                                                            }
-                                                        </td>
-                                                        <td>
-                                                            {result.student.gpa}
-                                                        </td>
-                                                        <td>
-                                                            <span
-                                                                className={`status-pill ${result.status === "ASSIGNED" ? "assigned" : "unassigned"}`}
-                                                            >
+                                                        >
+                                                            <td className="fw-semibold">
+                                                                {
+                                                                    result
+                                                                        .student
+                                                                        .name
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    result
+                                                                        .student
+                                                                        .major
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    result
+                                                                        .student
+                                                                        .gpa
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                <span
+                                                                    className={`status-pill ${result.status === "ASSIGNED" ? "assigned" : "unassigned"}`}
+                                                                >
+                                                                    {result.status ===
+                                                                    "ASSIGNED"
+                                                                        ? "Assigned"
+                                                                        : "Unassigned"}
+                                                                </span>
+                                                            </td>
+                                                            <td>
                                                                 {result.status ===
                                                                 "ASSIGNED"
-                                                                    ? "Assigned"
-                                                                    : "Unassigned"}
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            {result.status ===
-                                                            "ASSIGNED"
-                                                                ? result
-                                                                      .internship
-                                                                      .title
-                                                                : "—"}
-                                                        </td>
-                                                        <td>
-                                                            {result.status ===
-                                                            "ASSIGNED"
-                                                                ? result
-                                                                      .internship
-                                                                      .company
-                                                                      .name
-                                                                : "—"}
-                                                        </td>
-                                                        <td>
-                                                            {result.status ===
-                                                            "ASSIGNED"
-                                                                ? wishLabel(
-                                                                      result.achievedWishOrder,
-                                                                  )
-                                                                : "—"}
-                                                        </td>
-                                                    </tr>
-                                                ))}
+                                                                    ? result
+                                                                          .internship
+                                                                          .title
+                                                                    : "—"}
+                                                            </td>
+                                                            <td>
+                                                                {result.status ===
+                                                                "ASSIGNED"
+                                                                    ? result
+                                                                          .internship
+                                                                          .company
+                                                                          .name
+                                                                    : "—"}
+                                                            </td>
+                                                            <td>
+                                                                {result.status ===
+                                                                "ASSIGNED"
+                                                                    ? wishLabel(
+                                                                          result.achievedWishOrder,
+                                                                      )
+                                                                    : "—"}
+                                                            </td>
+                                                        </tr>
+                                                    ),
+                                                )}
                                             </tbody>
                                         </table>
                                     </div>
+                                )}
+                                {totalResultPages > 1 && (
+                                    <nav
+                                        className="pagination-bar p-4 border-top"
+                                        aria-label="Distribution result pages"
+                                    >
+                                        <button
+                                            className="btn btn-outline-secondary"
+                                            disabled={resultsPage === 1}
+                                            onClick={() =>
+                                                setResultsPage(
+                                                    (page) => page - 1,
+                                                )
+                                            }
+                                        >
+                                            ← Previous
+                                        </button>
+                                        <span>
+                                            Page <strong>{resultsPage}</strong>{" "}
+                                            of {totalResultPages}
+                                        </span>
+                                        <button
+                                            className="btn btn-outline-secondary"
+                                            disabled={
+                                                resultsPage === totalResultPages
+                                            }
+                                            onClick={() =>
+                                                setResultsPage(
+                                                    (page) => page + 1,
+                                                )
+                                            }
+                                        >
+                                            Next →
+                                        </button>
+                                    </nav>
                                 )}
                             </div>
                         </section>
