@@ -64,7 +64,6 @@ model Internship {
   updatedAt           DateTime             @updatedAt
   company             CompanyProfile       @relation(fields: [companyId], references: [id], onDelete: Restrict)
   applications        Application[]
-  distributionResults DistributionResult[]
 }
 
 model Application {
@@ -75,6 +74,7 @@ model Application {
   createdAt    DateTime       @default(now())
   student      StudentProfile @relation(fields: [studentId], references: [id], onDelete: Restrict)
   internship   Internship     @relation(fields: [internshipId], references: [id], onDelete: Restrict)
+  distributionResult DistributionResult?
 
   @@unique([studentId, internshipId])
   @@unique([studentId, wishOrder])
@@ -90,12 +90,11 @@ model ProfileView {
 }
 
 model DistributionResult {
-  id           String         @id @default(uuid()) @db.Uuid
-  studentId    String         @unique @db.Uuid
-  internshipId String?        @db.Uuid
-  wishOrder    Int?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  student      StudentProfile @relation(fields: [studentId], references: [id], onDelete: Restrict)
-  internship   Internship?    @relation(fields: [internshipId], references: [id], onDelete: Restrict)
+  id            String         @id @default(uuid()) @db.Uuid
+  studentId     String         @unique @db.Uuid
+  applicationId String?        @unique @db.Uuid
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  student       StudentProfile @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  application   Application?   @relation(fields: [applicationId], references: [id], onDelete: Restrict)
 }
