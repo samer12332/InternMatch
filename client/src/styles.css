@@ -61,9 +61,23 @@ body { background: #f5f7fb; }
 .app-navbar {
   min-height: 4.5rem;
   background: rgb(255 255 255 / 92%);
+  backdrop-filter: blur(10px);
 }
 
+.app-navbar-content, .app-navbar-actions, .account-actions, .student-nav-links { display: flex; align-items: center; }
+.app-navbar-content { justify-content: space-between; gap: 1.5rem; }
+.app-navbar-actions { gap: 1.25rem; }
+.student-nav-links { gap: .25rem; padding: .25rem; border-radius: .75rem; background: #f3f6fc; }
+.student-nav-link { padding: .45rem .7rem; border-radius: .55rem; color: #64708a; font-size: .875rem; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.student-nav-link:hover { color: #2849b4; }
+.student-nav-link.active { color: #2849b4; background: #fff; box-shadow: 0 .15rem .5rem rgb(31 50 94 / 10%); }
+.account-actions { gap: .75rem; }
+
 .dashboard-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
   padding: 2.5rem;
   border-radius: 1.15rem;
   color: #fff;
@@ -76,6 +90,28 @@ body { background: #f5f7fb; }
   border-radius: 1rem;
   box-shadow: 0 .5rem 1.75rem rgb(31 50 94 / 7%);
 }
+
+.dashboard-page { max-width: 72rem; }
+.dashboard-hero-eyebrow { color: rgb(255 255 255 / 70%); font-size: .75rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
+.dashboard-hero-mark { display: grid; flex: 0 0 auto; width: 4.5rem; height: 4.5rem; place-items: center; border: 1px solid rgb(255 255 255 / 24%); border-radius: 1.15rem; background: rgb(255 255 255 / 12%); color: #fff; font-size: 1.35rem; font-weight: 800; letter-spacing: -.08em; }
+.dashboard-account-card, .dashboard-role-card { position: relative; overflow: hidden; }.dashboard-card-icon { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; margin-bottom: 1.25rem; border-radius: .75rem; font-size: 1.05rem; font-weight: 800; }.dashboard-card-icon-primary { color: #2849b4; background: #e8eeff; }.dashboard-card-icon-soft { color: #68758d; background: #edf0f5; }
+.dashboard-profile-card { overflow: hidden; border: 1px solid #dce5fa; border-radius: 1rem; background: linear-gradient(105deg, #fff, #f4f7ff); box-shadow: 0 .6rem 1.9rem rgb(31 50 94 / 7%); }.dashboard-profile-content { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }.dashboard-view-count { color: #2849b4; font-size: clamp(2.4rem, 5vw, 3.3rem); font-weight: 750; line-height: .95; letter-spacing: -.06em; }.dashboard-quick-actions { padding: 1.1rem 1.25rem; border: 1px solid #e0e7f6; border-radius: .85rem; background: rgb(255 255 255 / 78%); }
+
+.student-page { max-width: 72rem; }
+.student-page-header { display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; }
+.wish-progress { display: flex; min-width: 9rem; align-items: center; gap: .65rem; padding: .7rem .9rem; border: 1px solid #dce5fa; border-radius: .85rem; background: #fff; }
+.wish-progress-count { color: #2849b4; font-size: 1.4rem; font-weight: 750; line-height: 1; }.wish-progress-count small { font-size: .8rem; font-weight: 600; }.wish-progress-label { color: #64708a; font-size: .75rem; font-weight: 600; line-height: 1.1; }
+.wish-progress-track { height: .35rem; overflow: hidden; border-radius: 999px; background: #e4e9f4; }.wish-progress-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #3157d5, #6d8cff); transition: width .2s ease; }
+.internship-card, .wish-card { border: 1px solid #e5eaf3; border-radius: 1rem; box-shadow: 0 .5rem 1.75rem rgb(31 50 94 / 6%); transition: box-shadow .2s ease, transform .2s ease; }.internship-card:hover, .wish-card:hover { box-shadow: 0 .8rem 2rem rgb(31 50 94 / 10%); transform: translateY(-2px); }
+.company-label { color: #3157d5; font-size: .8rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }.internship-description { max-width: 53rem; color: #536079; line-height: 1.65; }
+.internship-meta { display: flex; flex-wrap: wrap; gap: .6rem; }.internship-meta span { display: inline-flex; flex-direction: column; min-width: 8rem; padding: .65rem .8rem; border-radius: .65rem; background: #f6f8fc; color: #263550; font-size: .875rem; font-weight: 600; }.internship-meta small { margin-bottom: .15rem; color: #7a879f; font-size: .68rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.selected-wish { padding: .48rem .75rem; border-radius: .55rem; color: #1a6b48; background: #e9f8f0; font-size: .875rem; font-weight: 700; }.pagination-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: #64708a; font-size: .875rem; }
+.student-status-card { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; min-height: 12rem; border: 1px dashed #cbd5e8; border-radius: 1rem; color: #64708a; background: #fff; text-align: center; }.student-status-card strong { color: #263550; font-size: 1.05rem; }
+.wish-save-note { display: flex; justify-content: space-between; gap: 1rem; padding: .75rem 1rem; border-radius: .75rem; color: #64708a; background: #edf2ff; font-size: .875rem; }.wish-number { display: grid; flex: 0 0 2.7rem; width: 2.7rem; height: 2.7rem; place-items: center; border-radius: .75rem; color: #2849b4; background: #e8eeff; font-weight: 800; }.wish-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.wish-card-moving-up { animation: wish-move-up .36s ease-out; }.wish-card-moving-down { animation: wish-move-down .36s ease-out; }
+@keyframes wish-move-up { 0% { opacity: .55; transform: translateY(1rem); } 65% { transform: translateY(-.35rem); } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes wish-move-down { 0% { opacity: .55; transform: translateY(-1rem); } 65% { transform: translateY(.35rem); } 100% { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .wish-card-moving-up, .wish-card-moving-down { animation: none; } }
 
 .role-badge {
   display: inline-flex;
@@ -98,5 +134,6 @@ body { background: #f5f7fb; }
 }
 
 @media (max-width: 575.98px) {
-  .dashboard-hero { padding: 1.75rem; }
+  .dashboard-hero { align-items: flex-start; padding: 1.75rem; }.dashboard-hero-mark { width: 3.4rem; height: 3.4rem; border-radius: .9rem; font-size: 1rem; }.dashboard-profile-content { align-items: stretch; flex-direction: column; gap: 1.5rem; }.dashboard-quick-actions { padding: 1rem; }.dashboard-quick-actions .btn { width: 100%; }
+  .app-navbar-content { align-items: flex-start; }.app-navbar-actions { align-items: flex-end; flex-direction: column; gap: .65rem; }.student-nav-links { max-width: 100%; overflow-x: auto; }.student-nav-link { padding: .4rem .55rem; font-size: .75rem; }.account-actions { width: 100%; justify-content: flex-end; }.student-page-header, .wish-save-note, .pagination-bar { align-items: stretch; flex-direction: column; }.student-page-header .btn { align-self: stretch; }.wish-progress { align-self: stretch; }.pagination-bar { text-align: center; }.pagination-bar .btn { width: 100%; }.internship-meta span { flex: 1 1 30%; min-width: 0; }
 }

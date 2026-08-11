@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext";
 
@@ -12,15 +12,22 @@ export const AppNavbar = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand app-navbar border-bottom">
-      <div className="container">
+    <nav className="navbar app-navbar border-bottom">
+      <div className="container app-navbar-content">
         <Link className="navbar-brand d-flex align-items-center gap-2 fw-semibold mb-0" to={user?.role === "STUDENT" ? "/student" : user?.role === "COMPANY" ? "/company" : "/admin"}>
           <span className="brand-mark">IM</span><span className="brand-label">InternMatch</span>
         </Link>
         {user && (
-          <div className="d-flex align-items-center gap-3">
-            <span className="text-muted small d-none d-md-inline">{user.email}</span>
-            <button className="btn btn-outline-secondary btn-sm" onClick={handleLogout}>Log out</button>
+          <div className="app-navbar-actions">
+            {user.role === "STUDENT" && <div className="student-nav-links">
+              <NavLink end className={({ isActive }) => `student-nav-link${isActive ? " active" : ""}`} to="/student">Dashboard</NavLink>
+              <NavLink className={({ isActive }) => `student-nav-link${isActive ? " active" : ""}`} to="/student/internships">Eligible Internships</NavLink>
+              <NavLink className={({ isActive }) => `student-nav-link${isActive ? " active" : ""}`} to="/student/wishes">My Wishes</NavLink>
+            </div>}
+            <div className="account-actions">
+              <span className="text-muted small d-none d-lg-inline">{user.email}</span>
+              <button className="btn btn-outline-secondary btn-sm" onClick={handleLogout}>Log out</button>
+            </div>
           </div>
         )}
       </div>
