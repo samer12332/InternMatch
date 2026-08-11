@@ -14,25 +14,87 @@ import { CompanyStudentsPage } from "./pages/CompanyStudentsPage";
 import { CompanyStudentProfilePage } from "./pages/CompanyStudentProfilePage";
 
 const HomeRedirect = () => {
-  const { user, isLoading } = useAuth();
-  if (isLoading) return <div className="page-loading">Restoring your session…</div>;
-  return <Navigate to={user ? dashboardPathForRole(user.role) : "/login"} replace />;
+    const { user, isLoading } = useAuth();
+    if (isLoading)
+        return <div className="page-loading">Restoring your session…</div>;
+    return (
+        <Navigate
+            to={user ? dashboardPathForRole(user.role) : "/login"}
+            replace
+        />
+    );
 };
 
 export const App = () => (
-  <Routes>
-    <Route path="/" element={<HomeRedirect />} />
-    <Route path="/login" element={<LoginPage />} />
-    <Route path="/register/student" element={<RegisterStudentPage />} />
-    <Route path="/register/company" element={<RegisterCompanyPage />} />
-    <Route path="/admin" element={<ProtectedRoute allowedRole="ADMIN"><AdminUnavailablePage /></ProtectedRoute>} />
-    <Route path="/student" element={<ProtectedRoute allowedRole="STUDENT"><DashboardPage role="STUDENT" /></ProtectedRoute>} />
-    <Route path="/student/internships" element={<ProtectedRoute allowedRole="STUDENT"><StudentInternshipsPage /></ProtectedRoute>} />
-    <Route path="/student/wishes" element={<ProtectedRoute allowedRole="STUDENT"><StudentWishesPage /></ProtectedRoute>} />
-    <Route path="/company" element={<ProtectedRoute allowedRole="COMPANY"><DashboardPage role="COMPANY" /></ProtectedRoute>} />
-    <Route path="/company/internships" element={<ProtectedRoute allowedRole="COMPANY"><CompanyInternshipsPage /></ProtectedRoute>} />
-    <Route path="/company/students" element={<ProtectedRoute allowedRole="COMPANY"><CompanyStudentsPage /></ProtectedRoute>} />
-    <Route path="/company/students/:studentId" element={<ProtectedRoute allowedRole="COMPANY"><CompanyStudentProfilePage /></ProtectedRoute>} />
-    <Route path="*" element={<HomeRedirect />} />
-  </Routes>
+    <Routes>
+        <Route path="/" element={<HomeRedirect />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register/student" element={<RegisterStudentPage />} />
+        <Route path="/register/company" element={<RegisterCompanyPage />} />
+        <Route
+            path="/admin"
+            element={
+                <ProtectedRoute allowedRole="ADMIN">
+                    <AdminUnavailablePage />
+                </ProtectedRoute>
+            }
+        />
+        <Route
+            path="/student"
+            element={
+                <ProtectedRoute allowedRole="STUDENT">
+                    <DashboardPage role="STUDENT" />
+                </ProtectedRoute>
+            }
+        />
+        <Route
+            path="/student/internships"
+            element={
+                <ProtectedRoute allowedRole="STUDENT">
+                    <StudentInternshipsPage />
+                </ProtectedRoute>
+            }
+        />
+        <Route
+            path="/student/wishes"
+            element={
+                <ProtectedRoute allowedRole="STUDENT">
+                    <StudentWishesPage />
+                </ProtectedRoute>
+            }
+        />
+        <Route
+            path="/company"
+            element={
+                <ProtectedRoute allowedRole="COMPANY">
+                    <DashboardPage role="COMPANY" />
+                </ProtectedRoute>
+            }
+        />
+        <Route
+            path="/company/internships"
+            element={
+                <ProtectedRoute allowedRole="COMPANY">
+                    <CompanyInternshipsPage />
+                </ProtectedRoute>
+            }
+        />
+        <Route
+            path="/company/students"
+            element={
+                <ProtectedRoute allowedRole="COMPANY">
+                    <CompanyStudentsPage />
+                </ProtectedRoute>
+            }
+        />
+        <Route
+            path="/company/students/:studentId"
+            element={
+                <ProtectedRoute allowedRole="COMPANY">
+                    <CompanyStudentProfilePage />
+                </ProtectedRoute>
+            }
+        />
+        <Route path="*" element={<HomeRedirect />} />
+    </Routes>
 );

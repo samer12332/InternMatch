@@ -6,45 +6,209 @@ import { getProfileSummary } from "../api/student";
 import { getApiErrorMessage } from "../api/errors";
 
 export const DashboardPage = ({ role }: { role: "STUDENT" | "COMPANY" }) => {
-  const { user } = useAuth();
-  const label = role === "STUDENT" ? "Student" : "Company";
-  const [profileViews, setProfileViews] = useState<number | null>(null);
-  const [profileError, setProfileError] = useState<string | null>(null);
-  useEffect(() => { if (role !== "STUDENT") return; void (async () => { try { setProfileViews((await getProfileSummary()).profileViews); } catch (err) { setProfileError(getApiErrorMessage(err, "Unable to load profile views.")); } })(); }, [role]);
+    const { user, profile } = useAuth();
+    const label = role === "STUDENT" ? "Student" : "Company";
+    const [profileViews, setProfileViews] = useState<number | null>(null);
+    const [profileError, setProfileError] = useState<string | null>(null);
+    useEffect(() => {
+        if (role !== "STUDENT") return;
+        void (async () => {
+            try {
+                setProfileViews((await getProfileSummary()).profileViews);
+            } catch (err) {
+                setProfileError(
+                    getApiErrorMessage(err, "Unable to load profile views."),
+                );
+            }
+        })();
+    }, [role]);
 
-  return (
-    <>
-      <AppNavbar />
-      <main className="container py-5 dashboard-page">
-        <section className="dashboard-hero mb-4">
-          <div>
-            <p className="dashboard-hero-eyebrow mb-2">Your workspace</p>
-            <h1 className="display-6 fw-semibold mb-2">Welcome to InternMatch</h1>
-            <p className="mb-0 text-white-50">Your {label.toLowerCase()} account is ready to use.</p>
-          </div>
-          <div className="dashboard-hero-mark" aria-hidden="true">IM</div>
-        </section>
-        <div className="row g-4">
-          <div className="col-md-7">
-            <section className="card dashboard-stat dashboard-account-card h-100"><div className="card-body p-4">
-              <div className="dashboard-card-icon dashboard-card-icon-primary" aria-hidden="true">@</div>
-              <p className="section-eyebrow mb-2">Signed-in account</p>
-              <h2 className="h5 text-break mb-2">{user?.email}</h2>
-              <p className="text-muted mb-0">This is the account currently active in your browser.</p>
-            </div></section>
-          </div>
-          <div className="col-md-5">
-            <section className="card dashboard-stat dashboard-role-card h-100"><div className="card-body p-4">
-              <div className="dashboard-card-icon dashboard-card-icon-soft" aria-hidden="true">◆</div>
-              <p className="section-eyebrow mb-3">Account role</p>
-              <span className="role-badge">{user?.role}</span>
-              <p className="text-muted small mt-3 mb-0">Your account permissions are set for this role.</p>
-            </div></section>
-          </div>
-          {role === "STUDENT" && <div className="col-12"><section className="card dashboard-profile-card"><div className="card-body p-4 p-md-5"><div className="dashboard-profile-content"><div className="dashboard-profile-stat"><p className="section-eyebrow mb-2">Profile visibility</p><div className="d-flex align-items-baseline gap-2"><h2 className="dashboard-view-count mb-0">{profileViews ?? "—"}</h2><span className="text-muted">views</span></div>{profileError ? <p className="text-danger small mt-3 mb-0">{profileError}</p> : <p className="text-muted mt-3 mb-0">Companies have viewed your profile this many times.</p>}</div><div className="dashboard-quick-actions"><p className="fw-semibold mb-2">Continue your search</p><div className="d-flex flex-wrap gap-2"><Link className="btn btn-primary" to="/student/internships">Browse internships <span aria-hidden="true">→</span></Link><Link className="btn btn-outline-secondary" to="/student/wishes">Manage my wishes</Link></div></div></div></div></section></div>}
-          {role === "COMPANY" && <div className="col-12"><section className="card dashboard-profile-card"><div className="card-body p-4 p-md-5"><div className="dashboard-profile-content"><div className="dashboard-profile-stat"><p className="section-eyebrow mb-2">Company workspace</p><h2 className="h3 mb-2">Manage your opportunities</h2><p className="text-muted mt-3 mb-0">Publish internships and find students whose profiles fit your opportunities.</p></div><div className="dashboard-quick-actions"><p className="fw-semibold mb-2">Get started</p><div className="d-flex flex-wrap gap-2"><Link className="btn btn-primary" to="/company/internships">My Internships <span aria-hidden="true">→</span></Link><Link className="btn btn-outline-secondary" to="/company/students">Search Students</Link></div></div></div></div></section></div>}
-        </div>
-      </main>
-    </>
-  );
+    return (
+        <>
+            <AppNavbar />
+            <main className="container py-5 dashboard-page">
+                <section className="dashboard-hero mb-4">
+                    <div>
+                        <p className="dashboard-hero-eyebrow mb-2">
+                            Your workspace
+                        </p>
+                        <h1 className="display-6 fw-semibold mb-2">
+                            Welcome{role === "STUDENT" && profile && "gpa" in profile ? `, ${profile.name}` : " to InternMatch"}
+                        </h1>
+                        <p className="mb-0 text-white-50">
+                            Your {label.toLowerCase()} account is ready to use.
+                        </p>
+                    </div>
+                    <div className="dashboard-hero-mark" aria-hidden="true">
+                        IM
+                    </div>
+                </section>
+                <div className="row g-4">
+                    <div className="col-md-7">
+                        <section className="card dashboard-stat dashboard-account-card h-100">
+                            <div className="card-body p-4">
+                                <div
+                                    className="dashboard-card-icon dashboard-card-icon-primary"
+                                    aria-hidden="true"
+                                >
+                                    @
+                                </div>
+                                <p className="section-eyebrow mb-2">
+                                    Signed-in account
+                                </p>
+                                <h2 className="h5 text-break mb-2">
+                                    {user?.email}
+                                </h2>
+                                <p className="text-muted mb-0">
+                                    This is the account currently active in your
+                                    browser.
+                                </p>
+                            </div>
+                        </section>
+                    </div>
+                    <div className="col-md-5">
+                        <section className="card dashboard-stat dashboard-role-card h-100">
+                            <div className="card-body p-4">
+                                <div
+                                    className="dashboard-card-icon dashboard-card-icon-soft"
+                                    aria-hidden="true"
+                                >
+                                    ◆
+                                </div>
+                                <p className="section-eyebrow mb-3">
+                                    Account role
+                                </p>
+                                <span className="role-badge">{user?.role}</span>
+                                <p className="text-muted small mt-3 mb-0">
+                                    Your account permissions are set for this
+                                    role.
+                                </p>
+                            </div>
+                        </section>
+                    </div>
+                    {role === "STUDENT" && profile && "gpa" in profile && (
+                        <div className="col-12">
+                            <section className="card student-dashboard-profile">
+                                <div className="card-body p-4 p-md-5">
+                                    <div className="d-flex flex-column flex-md-row justify-content-between gap-4">
+                                        <div>
+                                            <p className="section-eyebrow mb-2">My profile</p>
+                                            <h2 className="h4 mb-1">{profile.name}</h2>
+                                            <p className="text-muted mb-0">{profile.major} · {profile.city}</p>
+                                        </div>
+                                        <div className="dashboard-profile-details">
+                                            <span><small>GPA</small><strong>{profile.gpa} / 4.00</strong></span>
+                                            <span><small>Major</small><strong>{profile.major}</strong></span>
+                                            <span><small>City</small><strong>{profile.city}</strong></span>
+                                        </div>
+                                    </div>
+                                    {profile.bio && <p className="student-bio mt-4 mb-0">{profile.bio}</p>}
+                                </div>
+                            </section>
+                        </div>
+                    )}
+                    {role === "STUDENT" && (
+                        <div className="col-12">
+                            <section className="card dashboard-profile-card">
+                                <div className="card-body p-4 p-md-5">
+                                    <div className="dashboard-profile-content">
+                                        <div className="dashboard-profile-stat">
+                                            <p className="section-eyebrow mb-2">
+                                                Profile visibility
+                                            </p>
+                                            <div className="d-flex align-items-baseline gap-2">
+                                                <h2 className="dashboard-view-count mb-0">
+                                                    {profileViews ?? "—"}
+                                                </h2>
+                                                <span className="text-muted">
+                                                    views
+                                                </span>
+                                            </div>
+                                            {profileError ? (
+                                                <p className="text-danger small mt-3 mb-0">
+                                                    {profileError}
+                                                </p>
+                                            ) : (
+                                                <p className="text-muted mt-3 mb-0">
+                                                    Companies have viewed your
+                                                    profile this many times.
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div className="dashboard-quick-actions">
+                                            <p className="fw-semibold mb-2">
+                                                Continue your search
+                                            </p>
+                                            <div className="d-flex flex-wrap gap-2">
+                                                <Link
+                                                    className="btn btn-primary"
+                                                    to="/student/internships"
+                                                >
+                                                    Browse internships{" "}
+                                                    <span aria-hidden="true">
+                                                        →
+                                                    </span>
+                                                </Link>
+                                                <Link
+                                                    className="btn btn-outline-secondary"
+                                                    to="/student/wishes"
+                                                >
+                                                    Manage my wishes
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    )}
+                    {role === "COMPANY" && (
+                        <div className="col-12">
+                            <section className="card dashboard-profile-card">
+                                <div className="card-body p-4 p-md-5">
+                                    <div className="dashboard-profile-content">
+                                        <div className="dashboard-profile-stat">
+                                            <p className="section-eyebrow mb-2">
+                                                Company workspace
+                                            </p>
+                                            <h2 className="h3 mb-2">
+                                                Manage your opportunities
+                                            </h2>
+                                            <p className="text-muted mt-3 mb-0">
+                                                Publish internships and find
+                                                students whose profiles fit your
+                                                opportunities.
+                                            </p>
+                                        </div>
+                                        <div className="dashboard-quick-actions">
+                                            <p className="fw-semibold mb-2">
+                                                Get started
+                                            </p>
+                                            <div className="d-flex flex-wrap gap-2">
+                                                <Link
+                                                    className="btn btn-primary"
+                                                    to="/company/internships"
+                                                >
+                                                    My Internships{" "}
+                                                    <span aria-hidden="true">
+                                                        →
+                                                    </span>
+                                                </Link>
+                                                <Link
+                                                    className="btn btn-outline-secondary"
+                                                    to="/company/students"
+                                                >
+                                                    Search Students
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    )}
+                </div>
+            </main>
+        </>
+    );
 };
