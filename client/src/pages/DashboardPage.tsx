@@ -4,12 +4,22 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getProfileSummary } from "../api/student";
 import { getApiErrorMessage } from "../api/errors";
+import {
+    getStudentDistributionResult,
+    type StudentDistributionResult,
+} from "../api/distribution";
 
 export const DashboardPage = ({ role }: { role: "STUDENT" | "COMPANY" }) => {
     const { user, profile } = useAuth();
     const label = role === "STUDENT" ? "Student" : "Company";
     const [profileViews, setProfileViews] = useState<number | null>(null);
     const [profileError, setProfileError] = useState<string | null>(null);
+    const [distributionResult, setDistributionResult] =
+        useState<StudentDistributionResult | null>(null);
+    const [distributionLoading, setDistributionLoading] = useState(false);
+    const [distributionError, setDistributionError] = useState<string | null>(
+        null,
+    );
     useEffect(() => {
         if (role !== "STUDENT") return;
         void (async () => {
@@ -19,6 +29,24 @@ export const DashboardPage = ({ role }: { role: "STUDENT" | "COMPANY" }) => {
                 setProfileError(
                     getApiErrorMessage(err, "Unable to load profile views."),
                 );
+            }
+        })();
+    }, [role]);
+    useEffect(() => {
+        if (role !== "STUDENT") return;
+        setDistributionLoading(true);
+        void (async () => {
+            try {
+                setDistributionResult(await getStudentDistributionResult());
+            } catch (err) {
+                setDistributionError(
+                    getApiErrorMessage(
+                        err,
+                        "Unable to load distribution result.",
+                    ),
+                );
+            } finally {
+                setDistributionLoading(false);
             }
         })();
     }, [role]);
@@ -33,7 +61,10 @@ export const DashboardPage = ({ role }: { role: "STUDENT" | "COMPANY" }) => {
                             Your workspace
                         </p>
                         <h1 className="display-6 fw-semibold mb-2">
-                            Welcome{role === "STUDENT" && profile && "gpa" in profile ? `, ${profile.name}` : " to InternMatch"}
+                            Welcome
+                            {role === "STUDENT" && profile && "gpa" in profile
+                                ? `, ${profile.name}`
+                                : " to InternMatch"}
                         </h1>
                         <p className="mb-0 text-white-50">
                             Your {label.toLowerCase()} account is ready to use.
@@ -92,17 +123,101 @@ export const DashboardPage = ({ role }: { role: "STUDENT" | "COMPANY" }) => {
                                 <div className="card-body p-4 p-md-5">
                                     <div className="d-flex flex-column flex-md-row justify-content-between gap-4">
                                         <div>
-                                            <p className="section-eyebrow mb-2">My profile</p>
-                                            <h2 className="h4 mb-1">{profile.name}</h2>
-                                            <p className="text-muted mb-0">{profile.major} · {profile.city}</p>
+                                            <p className="section-eyebrow mb-2">
+                                                My profile
+                                            </p>
+                                            <h2 className="h4 mb-1">
+                                                {profile.name}
+                                            </h2>
+                                            <p className="text-muted mb-0">
+                                                {profile.major} · {profile.city}
+                                            </p>
                                         </div>
                                         <div className="dashboard-profile-details">
-                                            <span><small>GPA</small><strong>{profile.gpa} / 4.00</strong></span>
-                                            <span><small>Major</small><strong>{profile.major}</strong></span>
-                                            <span><small>City</small><strong>{profile.city}</strong></span>
+                                            <span>
+                                                <small>GPA</small>
+                                                <strong>
+                                                    {profile.gpa} / 4.00
+                                                </strong>
+                                            </span>
+                                            <span>
+                                                <small>Major</small>
+                                                <strong>{profile.major}</strong>
+                                            </span>
+                                            <span>
+                                                <small>City</small>
+                                                <strong>{profile.city}</strong>
+                                            </span>
                                         </div>
                                     </div>
-                                    {profile.bio && <p className="student-bio mt-4 mb-0">{profile.bio}</p>}
+                                    {profile.bio && (
+                                        <p className="student-bio mt-4 mb-0">
+                                            {profile.bio}
+                                        </p>
+                                    )}
+                                </div>
+                            </section>
+                        </div>
+                    )}
+                    {role === "STUDENT" && (
+                        <div className="col-12">
+                            <section className="card distribution-result-card">
+                                <div className="card-body p-4 p-md-5">
+                                    <p className="section-eyebrow mb-2">
+                                        Distribution result
+                                    </p>
+                                    <h2 className="h4 mb-3">
+                                        Your internship allocation
+                                    </h2>
+                                    {distributionLoading ? (
+                                        <p className="text-muted mb-0">
+                                            Loading your result…
+                                        </p>
+                                    ) : distributionError ? (
+                                        <p className="text-danger mb-0">
+                                            {distributionError}
+                                        </p>
+                                    ) : distributionResult?.status ===
+                                      "ASSIGNED" ? (
+                                        <div>
+                                            <span className="status-pill assigned mb-3">
+                                                Assigned ·{" "}
+                                                {distributionResult.achievedWishOrder ===
+                                                1
+                                                    ? "1st Wish"
+                                                    : distributionResult.achievedWishOrder ===
+                                                        2
+                                                      ? "2nd Wish"
+                                                      : "3rd Wish"}
+                                            </span>
+                                            <h3 className="h5 mb-1">
+                                                {
+                                                    distributionResult
+                                                        .internship.title
+                                                }
+                                            </h3>
+                                            <p className="text-muted mb-0">
+                                                {
+                                                    distributionResult
+                                                        .internship.company.name
+                                                }{" "}
+                                                ·{" "}
+                                                {
+                                                    distributionResult
+                                                        .internship.major
+                                                }
+                                            </p>
+                                        </div>
+                                    ) : distributionResult?.status ===
+                                      "UNASSIGNED" ? (
+                                        <p className="text-muted mb-0">
+                                            Not assigned to an internship.
+                                        </p>
+                                    ) : (
+                                        <p className="text-muted mb-0">
+                                            Distribution has not been run yet.
+                                        </p>
+                                    )}
                                 </div>
                             </section>
                         </div>
