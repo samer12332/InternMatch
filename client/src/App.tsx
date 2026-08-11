@@ -9,6 +9,9 @@ import { RegisterCompanyPage } from "./pages/RegisterCompanyPage";
 import { RegisterStudentPage } from "./pages/RegisterStudentPage";
 import { StudentInternshipsPage } from "./pages/StudentInternshipsPage";
 import { StudentWishesPage } from "./pages/StudentWishesPage";
+import { CompanyInternshipsPage } from "./pages/CompanyInternshipsPage";
+import { CompanyStudentsPage } from "./pages/CompanyStudentsPage";
+import { CompanyStudentProfilePage } from "./pages/CompanyStudentProfilePage";
 
 const HomeRedirect = () => {
   const { user, isLoading } = useAuth();
@@ -27,6 +30,9 @@ export const App = () => (
     <Route path="/student/internships" element={<ProtectedRoute allowedRole="STUDENT"><StudentInternshipsPage /></ProtectedRoute>} />
     <Route path="/student/wishes" element={<ProtectedRoute allowedRole="STUDENT"><StudentWishesPage /></ProtectedRoute>} />
     <Route path="/company" element={<ProtectedRoute allowedRole="COMPANY"><DashboardPage role="COMPANY" /></ProtectedRoute>} />
+    <Route path="/company/internships" element={<ProtectedRoute allowedRole="COMPANY"><CompanyInternshipsPage /></ProtectedRoute>} />
+    <Route path="/company/students" element={<ProtectedRoute allowedRole="COMPANY"><CompanyStudentsPage /></ProtectedRoute>} />
+    <Route path="/company/students/:studentId" element={<ProtectedRoute allowedRole="COMPANY"><CompanyStudentProfilePage /></ProtectedRoute>} />
     <Route path="*" element={<HomeRedirect />} />
   </Routes>
 );

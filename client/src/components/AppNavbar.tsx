@@ -24,6 +24,7 @@ export const AppNavbar = () => {
               <NavLink className={({ isActive }) => `student-nav-link${isActive ? " active" : ""}`} to="/student/internships">Eligible Internships</NavLink>
               <NavLink className={({ isActive }) => `student-nav-link${isActive ? " active" : ""}`} to="/student/wishes">My Wishes</NavLink>
             </div>}
+            {user.role === "COMPANY" && <div className="student-nav-links"><NavLink end className={({ isActive }) => `student-nav-link${isActive ? " active" : ""}`} to="/company">Dashboard</NavLink><NavLink className={({ isActive }) => `student-nav-link${isActive ? " active" : ""}`} to="/company/internships">My Internships</NavLink><NavLink className={({ isActive }) => `student-nav-link${isActive ? " active" : ""}`} to="/company/students">Search Students</NavLink></div>}
             <div className="account-actions">
               <span className="text-muted small d-none d-lg-inline">{user.email}</span>
               <button className="btn btn-outline-secondary btn-sm" onClick={handleLogout}>Log out</button>
