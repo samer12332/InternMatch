@@ -1,4 +1,5 @@
 import { AppNavbar } from "../components/AppNavbar";
+import { BrandLogo } from "../components/BrandLogo";
 import { useAuth } from "../auth/AuthContext";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -70,8 +71,8 @@ export const DashboardPage = ({ role }: { role: "STUDENT" | "COMPANY" }) => {
                             Your {label.toLowerCase()} account is ready to use.
                         </p>
                     </div>
-                    <div className="dashboard-hero-mark" aria-hidden="true">
-                        IM
+                    <div className="dashboard-hero-mark">
+                        <BrandLogo variant="hero" iconOnly />
                     </div>
                 </section>
                 <div className="row g-4">

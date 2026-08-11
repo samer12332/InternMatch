@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getApiErrorMessage } from "../api/errors";
 import { useAuth } from "../auth/AuthContext";
 import { dashboardPathForRole } from "../auth/ProtectedRoute";
+import { BrandLogo } from "../components/BrandLogo";
 
 type LocationState = { message?: string; from?: { pathname?: string } };
 
@@ -42,12 +43,13 @@ export const LoginPage = () => {
         <main className="auth-page container py-5">
             <section className="card shadow-sm auth-card">
                 <div className="card-body p-4 p-md-5">
-                    <div className="d-flex align-items-center gap-2 mb-4">
-                        <span className="brand-mark">IM</span>
-                        <span className="brand-label fw-semibold fs-5">
-                            InternMatch
-                        </span>
-                    </div>
+                    <Link
+                        className="auth-brand-link mb-4"
+                        to="/"
+                        aria-label="InternMatch home"
+                    >
+                        <BrandLogo variant="auth" />
+                    </Link>
                     <p className="auth-eyebrow mb-2">Account access</p>
                     <h1 className="h2 mb-2">Welcome back</h1>
                     <p className="text-muted mb-4">

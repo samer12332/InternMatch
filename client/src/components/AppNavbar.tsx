@@ -1,6 +1,7 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext";
+import { BrandLogo } from "./BrandLogo";
 
 export const AppNavbar = () => {
     const { user, logout } = useAuth();
@@ -24,8 +25,7 @@ export const AppNavbar = () => {
                               : "/admin"
                     }
                 >
-                    <span className="brand-mark">IM</span>
-                    <span className="brand-label">InternMatch</span>
+                    <BrandLogo />
                 </Link>
                 {user && (
                     <div className="app-navbar-actions">
