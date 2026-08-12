@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-import { getStudentProfile, type StudentProfile } from "../api/company";
+import {
+    getStudentProfile,
+    recordStudentProfileView,
+    type StudentProfile,
+} from "../api/company";
 import { getApiErrorMessage } from "../api/errors";
 import { AppNavbar } from "../components/AppNavbar";
 
@@ -15,7 +19,9 @@ export const CompanyStudentProfilePage = () => {
         fetched.current = true;
         void (async () => {
             try {
-                setStudent(await getStudentProfile(studentId));
+                const profile = await getStudentProfile(studentId);
+                setStudent(profile);
+                void recordStudentProfileView(studentId).catch(() => undefined);
             } catch (err) {
                 setError(
                     getApiErrorMessage(

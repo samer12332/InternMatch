@@ -9,6 +9,7 @@ import {
 } from "../company/company-internship.controller";
 import {
     getStudentProfileHandler,
+    recordStudentProfileViewHandler,
     searchStudentsHandler,
 } from "../company/company-student.controller";
 import {
@@ -41,6 +42,11 @@ companyRouter.get(
     "/students/:studentId",
     validateParams(studentIdParamsSchema),
     getStudentProfileHandler,
+);
+companyRouter.post(
+    "/students/:studentId/views",
+    validateParams(studentIdParamsSchema),
+    recordStudentProfileViewHandler,
 );
 companyRouter.post(
     "/internships",

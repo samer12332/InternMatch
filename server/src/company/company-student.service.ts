@@ -50,7 +50,22 @@ export const searchStudents = async ({
     };
 };
 
-export const getStudentProfileAndRecordView = async (
+export const getStudentProfile = async (studentId: string) => {
+    const studentProfile = await prisma.studentProfile.findUnique({
+        where: { id: studentId },
+        select: {
+            ...studentProfileSelect,
+            user: { select: { email: true } },
+        },
+    });
+
+    if (!studentProfile) throw new AppError("Student not found", 404);
+
+    const { user, ...profile } = studentProfile;
+    return { ...profile, email: user.email };
+};
+
+export const recordStudentProfileView = async (
     userId: string,
     studentId: string,
 ) =>
@@ -62,10 +77,7 @@ export const getStudentProfileAndRecordView = async (
             }),
             transaction.studentProfile.findUnique({
                 where: { id: studentId },
-                select: {
-                    ...studentProfileSelect,
-                    user: { select: { email: true } },
-                },
+                select: { id: true },
             }),
         ]);
 
@@ -79,8 +91,6 @@ export const getStudentProfileAndRecordView = async (
                 companyId: companyProfile.id,
             },
         });
-        const { user, ...profile } = studentProfile;
-        return { ...profile, email: user.email };
     });
 
 export const getStudentProfileViewSummary = async (userId: string) => {

@@ -86,7 +86,7 @@ Deterministic evaluation-only credentials; all use `Password123`:
 
 - **Auth:** `POST /api/auth/register/student`, `POST /api/auth/register/company`, `POST /api/auth/login`, `GET /api/auth/me`
 - **Student:** `/api/students/me/internships`, `/wishes`, `/profile-summary`, `/distribution-result`
-- **Company:** `/api/company/internships`, `/api/company/students`, `/api/company/students/:studentId`
+- **Company:** `/api/company/internships`, `/api/company/students`, `GET /api/company/students/:studentId`, `POST /api/company/students/:studentId/views`
 - **Admin:** `POST /api/admin/distribution/run`, `GET /api/admin/distribution/summary`, `GET /api/admin/distribution/results`
 
 ## Testing

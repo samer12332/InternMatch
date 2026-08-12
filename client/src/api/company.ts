@@ -101,3 +101,6 @@ export const getStudentProfile = async (id: string) =>
             `/company/students/${id}`,
         )
     ).data.data.student;
+export const recordStudentProfileView = async (id: string) => {
+    await api.post(`/company/students/${id}/views`);
+};

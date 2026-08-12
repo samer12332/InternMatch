@@ -54,7 +54,7 @@ The platform distributes internship opportunities among students. Students provi
 - A minimal `ADMIN` role exists to execute distribution.
 - A company's “request number of applications” means filtered student search with a result limit.
 - Bio search initially uses simple case-insensitive text matching.
-- Each successful company profile-detail request records one profile view, including repeated views.
+- Each successful company profile-view event records one view, including repeated views. Profile retrieval itself is read-only.
 - Major is a hard eligibility rule, not a numeric ranking weight.
 - Distribution is a project decision: major is a hard eligibility condition; wish order determines three allocation rounds; and GPA ranks candidates only within the same internship and round. GPA ties use `Application.createdAt` ascending, then application ID.
 - The complete first-wish round is allocated before second wishes, and the second-wish round before third wishes. Capacity limits final assignments, not wishes. Only one current `DistributionResult` is kept for each student; rerunning distribution atomically replaces all current results.
