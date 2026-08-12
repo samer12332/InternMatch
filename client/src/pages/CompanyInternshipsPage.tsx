@@ -3,6 +3,7 @@ import { AppNavbar } from "../components/AppNavbar";
 import { InternshipForm } from "../components/InternshipForm";
 import {
     createCompanyInternship,
+    deleteCompanyInternship,
     getCompanyInternships,
     updateCompanyInternship,
     type CompanyInternship,
@@ -14,6 +15,7 @@ export const CompanyInternshipsPage = () => {
     const [internships, setInternships] = useState<CompanyInternship[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
     const [editing, setEditing] = useState<
         CompanyInternship | null | undefined
     >(undefined);
@@ -53,6 +55,33 @@ export const CompanyInternshipsPage = () => {
             setError(getApiErrorMessage(err, "Unable to save internship."));
         } finally {
             setSaving(false);
+        }
+    };
+    const remove = async (internship: CompanyInternship) => {
+        if (
+            !window.confirm(
+                `Delete the internship posting \"${internship.title}\"? This cannot be undone.`,
+            )
+        ) {
+            return;
+        }
+
+        setDeletingId(internship.id);
+        setError(null);
+        setSuccess(null);
+        try {
+            await deleteCompanyInternship(internship.id);
+            setInternships((current) =>
+                current.filter((item) => item.id !== internship.id),
+            );
+            if (editing?.id === internship.id) {
+                setEditing(undefined);
+            }
+            setSuccess("Internship deleted.");
+        } catch (err) {
+            setError(getApiErrorMessage(err, "Unable to delete internship."));
+        } finally {
+            setDeletingId(null);
         }
     };
     return (
@@ -141,16 +170,28 @@ export const CompanyInternshipsPage = () => {
                                                 {internship.description}
                                             </p>
                                         </div>
-                                        <button
-                                            className="btn btn-outline-secondary align-self-md-start"
-                                            onClick={() => {
-                                                setEditing(internship);
-                                                setError(null);
-                                                setSuccess(null);
-                                            }}
-                                        >
-                                            Edit posting
-                                        </button>
+                                        <div className="d-flex gap-2 align-self-md-start">
+                                            <button
+                                                className="btn btn-outline-secondary"
+                                                onClick={() => {
+                                                    setEditing(internship);
+                                                    setError(null);
+                                                    setSuccess(null);
+                                                }}
+                                                disabled={deletingId === internship.id}
+                                            >
+                                                Edit posting
+                                            </button>
+                                            <button
+                                                className="btn btn-outline-danger"
+                                                onClick={() => void remove(internship)}
+                                                disabled={deletingId === internship.id}
+                                            >
+                                                {deletingId === internship.id
+                                                    ? "Deleting…"
+                                                    : "Delete"}
+                                            </button>
+                                        </div>
                                     </div>
                                     <div className="internship-meta">
                                         <span>

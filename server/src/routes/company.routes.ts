@@ -3,6 +3,7 @@ import { Router } from "express";
 
 import {
     createInternshipHandler,
+    deleteInternshipHandler,
     getInternshipsHandler,
     updateInternshipHandler,
 } from "../company/company-internship.controller";
@@ -52,4 +53,9 @@ companyRouter.patch(
     validateParams(internshipIdParamsSchema),
     validateBody(updateInternshipSchema),
     updateInternshipHandler,
+);
+companyRouter.delete(
+    "/internships/:id",
+    validateParams(internshipIdParamsSchema),
+    deleteInternshipHandler,
 );

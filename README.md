@@ -19,7 +19,7 @@ The repository contains separate frontend (`/client`) and backend (`/server`) ap
 
 **Students:** register/login, browse eligible internships, maintain up to three ranked wishes, see profile views, and see a final distribution result.
 
-**Companies:** register/login, create/list/edit internships, search students by major/city/GPA/bio, and view safe student profiles.
+**Companies:** register/login, create/list/edit/delete internships, search students by major/city/GPA/bio, and view safe student profiles. Companies can delete only their own unused internships; once student wishes/applications exist, deletion is rejected and those wishes are never cascade-deleted. In production, an archive or status workflow may be preferable once an internship enters an active application lifecycle.
 
 **Admin:** run distribution, inspect its summary, and review current results.
 

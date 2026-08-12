@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 import { prisma } from "../config/prisma";
 import { env } from "../config/env";
 import { AppError } from "../utils/AppError";
@@ -92,4 +94,55 @@ export const updateCompanyInternship = async (
         where: { id: internship.id },
         data: input,
     });
+};
+
+export const deleteCompanyInternship = async (
+    userId: string,
+    internshipId: string,
+) => {
+    const companyId = await getCompanyProfileId(userId);
+
+    try {
+        await prisma.$transaction(async (tx) => {
+            const internship = await tx.internship.findFirst({
+                where: {
+                    id: internshipId,
+                    companyId,
+                },
+                select: { id: true },
+            });
+
+            if (!internship) {
+                throw new AppError("Internship not found", 404);
+            }
+
+            const application = await tx.application.findFirst({
+                where: { internshipId: internship.id },
+                select: { id: true },
+            });
+
+            if (application) {
+                throw new AppError(
+                    "Cannot delete an internship with existing student wishes",
+                    409,
+                );
+            }
+
+            await tx.internship.delete({ where: { id: internship.id } });
+        });
+    } catch (error) {
+        // A simultaneous wish creation is still protected by the restrictive
+        // foreign key; present that expected race as the same business rule.
+        if (
+            error instanceof Prisma.PrismaClientKnownRequestError &&
+            error.code === "P2003"
+        ) {
+            throw new AppError(
+                "Cannot delete an internship with existing student wishes",
+                409,
+            );
+        }
+
+        throw error;
+    }
 };

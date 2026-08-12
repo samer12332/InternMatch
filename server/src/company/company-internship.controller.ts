@@ -6,6 +6,7 @@ import type {
 } from "./company-internship.schemas";
 import {
     createCompanyInternship,
+    deleteCompanyInternship,
     getCompanyInternships,
     updateCompanyInternship,
 } from "./company-internship.service";
@@ -43,4 +44,10 @@ export const updateInternshipHandler: RequestHandler = async (req, res) => {
         success: true,
         data: { internship },
     });
+};
+
+export const deleteInternshipHandler: RequestHandler = async (req, res) => {
+    await deleteCompanyInternship(req.user!.id, String(req.params.id));
+
+    res.status(204).send();
 };

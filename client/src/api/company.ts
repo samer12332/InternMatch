@@ -73,6 +73,9 @@ export const updateCompanyInternship = async (
             }>(`/company/internships/${id}`, toInternshipPayload(input))
         ).data.data.internship,
     );
+export const deleteCompanyInternship = async (id: string) => {
+    await api.delete(`/company/internships/${id}`);
+};
 export const searchStudents = async (filters: StudentFilters, page: number) =>
     (
         await api.get<{
