@@ -84,17 +84,16 @@ export const replaceStudentWishes = async (
             );
         }
 
-        const assignedResult = await transaction.distributionResult.findFirst({
-            where: {
-                studentId: studentProfile.id,
-                applicationId: { not: null },
+        const distributionResult = await transaction.distributionResult.findUnique(
+            {
+                where: { studentId: studentProfile.id },
+                select: { id: true },
             },
-            select: { id: true },
-        });
+        );
 
-        if (assignedResult) {
+        if (distributionResult) {
             throw new AppError(
-                "Cannot change wishes after receiving a distribution result",
+                "Cannot change wishes after the distribution has been run",
                 409,
             );
         }
