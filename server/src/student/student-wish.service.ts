@@ -84,6 +84,21 @@ export const replaceStudentWishes = async (
             );
         }
 
+        const assignedResult = await transaction.distributionResult.findFirst({
+            where: {
+                studentId: studentProfile.id,
+                applicationId: { not: null },
+            },
+            select: { id: true },
+        });
+
+        if (assignedResult) {
+            throw new AppError(
+                "Cannot change wishes after receiving a distribution result",
+                409,
+            );
+        }
+
         await transaction.application.deleteMany({
             where: { studentId: studentProfile.id },
         });

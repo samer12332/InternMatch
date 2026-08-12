@@ -3,7 +3,6 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "../config/prisma";
 import { AppError } from "../utils/AppError";
 import type { StudentSearchInput } from "./company-student.schemas";
-import { email } from "zod";
 
 const studentProfileSelect = {
     id: true,
@@ -12,11 +11,6 @@ const studentProfileSelect = {
     gpa: true,
     major: true,
     bio: true,
-    // user: {
-    //   select: {
-    //     email: true
-    //   }
-    // }
 } as const;
 
 export const searchStudents = async ({
@@ -68,7 +62,10 @@ export const getStudentProfileAndRecordView = async (
             }),
             transaction.studentProfile.findUnique({
                 where: { id: studentId },
-                select: studentProfileSelect,
+                select: {
+                    ...studentProfileSelect,
+                    user: { select: { email: true } },
+                },
             }),
         ]);
 
@@ -82,7 +79,8 @@ export const getStudentProfileAndRecordView = async (
                 companyId: companyProfile.id,
             },
         });
-        return studentProfile;
+        const { user, ...profile } = studentProfile;
+        return { ...profile, email: user.email };
     });
 
 export const getStudentProfileViewSummary = async (userId: string) => {

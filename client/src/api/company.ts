@@ -17,6 +17,7 @@ export type InternshipInput = Pick<
 export type StudentProfile = {
     id: string;
     name: string;
+    email: string;
     city: string;
     gpa: number;
     major: string;

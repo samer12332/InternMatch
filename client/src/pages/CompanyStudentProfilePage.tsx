@@ -77,6 +77,10 @@ export const CompanyStudentProfilePage = () => {
                                     <small>Location</small>
                                     <strong>{student.city}</strong>
                                 </div>
+                                <div>
+                                    <small>Email</small>
+                                    <strong>{student.email}</strong>
+                                </div>
                             </div>
                             <section>
                                 <p className="section-eyebrow mb-2">
