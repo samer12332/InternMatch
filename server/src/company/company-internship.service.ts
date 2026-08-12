@@ -22,11 +22,12 @@ const getCompanyProfileId = async (userId: string) => {
 };
 
 const assertMajorPostingLimit = async (
+    transaction: Prisma.TransactionClient,
     companyId: string,
     major: string,
     excludedInternshipId?: string,
 ) => {
-    const internshipCount = await prisma.internship.count({
+    const internshipCount = await transaction.internship.count({
         where: {
             companyId,
             major: {
@@ -44,18 +45,54 @@ const assertMajorPostingLimit = async (
     }
 };
 
+const maxSerializationRetries = 3;
+
+const runPostingLimitTransaction = async <T>(
+    operation: (transaction: Prisma.TransactionClient) => Promise<T>,
+) => {
+    for (let attempt = 0; attempt < maxSerializationRetries; attempt += 1) {
+        try {
+            return await prisma.$transaction(operation, {
+                isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+            });
+        } catch (error) {
+            const isSerializationFailure =
+                error instanceof Prisma.PrismaClientKnownRequestError &&
+                error.code === "P2034";
+
+            if (
+                !isSerializationFailure ||
+                attempt === maxSerializationRetries - 1
+            ) {
+                if (isSerializationFailure) {
+                    throw new AppError(
+                        "Unable to create internship due to concurrent changes; please try again",
+                        409,
+                    );
+                }
+                throw error;
+            }
+        }
+    }
+
+    throw new AppError("Unable to create internship; please try again", 409);
+};
+
 export const createCompanyInternship = async (
     userId: string,
     input: CreateInternshipInput,
 ) => {
     const companyId = await getCompanyProfileId(userId);
-    await assertMajorPostingLimit(companyId, input.major);
 
-    return prisma.internship.create({
-        data: {
-            companyId,
-            ...input,
-        },
+    return runPostingLimitTransaction(async (transaction) => {
+        await assertMajorPostingLimit(transaction, companyId, input.major);
+
+        return transaction.internship.create({
+            data: {
+                companyId,
+                ...input,
+            },
+        });
     });
 };
 
@@ -74,25 +111,32 @@ export const updateCompanyInternship = async (
     input: UpdateInternshipInput,
 ) => {
     const companyId = await getCompanyProfileId(userId);
-    const internship = await prisma.internship.findFirst({
-        where: {
-            id: internshipId,
-            companyId,
-        },
-        select: { id: true },
-    });
+    return runPostingLimitTransaction(async (transaction) => {
+        const internship = await transaction.internship.findFirst({
+            where: {
+                id: internshipId,
+                companyId,
+            },
+            select: { id: true },
+        });
 
-    if (!internship) {
-        throw new AppError("Internship not found", 404);
-    }
+        if (!internship) {
+            throw new AppError("Internship not found", 404);
+        }
 
-    if (input.major !== undefined) {
-        await assertMajorPostingLimit(companyId, input.major, internship.id);
-    }
+        if (input.major !== undefined) {
+            await assertMajorPostingLimit(
+                transaction,
+                companyId,
+                input.major,
+                internship.id,
+            );
+        }
 
-    return prisma.internship.update({
-        where: { id: internship.id },
-        data: input,
+        return transaction.internship.update({
+            where: { id: internship.id },
+            data: input,
+        });
     });
 };
 
